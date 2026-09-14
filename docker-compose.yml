@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Nexus-Agent FastAPI application (orchestrator, sandbox tools, OSINT/voice routes)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexus-api
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_URL=http://qdrant:6333
+      - E2B_API_KEY=${E2B_API_KEY:-}
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - qdrant
+    volumes:
+      - ./src:/app/src
+
+  # Vector Database for Facial Embeddings & OSINT Search
+  #
+  # NOTE: qdrant-client in requirements.txt is unpinned (always installs
+  # PyPI's latest), so this image tag should periodically be bumped to
+  # stay within 1 minor version of whatever `pip show qdrant-client`
+  # reports — qdrant-client warns (and can misbehave) if client/server
+  # drift by more than one minor version. `latest` is used here so the
+  # server always tracks a recent release without requiring you to look
+  # up an exact tag; pin to a specific version for production
+  # reproducibility once you've settled on one.
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: nexus-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+  # Cache & Agent State Persistence
+  redis:
+    image: redis:7-alpine
+    container_name: nexus-redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  qdrant_data:

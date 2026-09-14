@@ -1,0 +1,3 @@
+{"example_id":"demo-1","turns":[{"role":"user","content":"What is 2+2?","tool_calls":[],"tool_call_id":null},{"role":"assistant","content":"4","tool_calls":[],"tool_call_id":null}],"source":"synthetic","tags":[]}
+{"example_id":"demo-2","turns":[{"role":"user","content":"Say hello","tool_calls":[],"tool_call_id":null},{"role":"assistant","content":"Hello!","tool_calls":[],"tool_call_id":null}],"source":"synthetic","tags":[]}
+{"example_id": "10119f5c-d57d-4244-9da5-cd43995d83fa", "turns": [{"role": "user", "content": "What is the capital of France?", "tool_calls": [], "tool_call_id": null}, {"role": "assistant", "content": "The capital of France is **Paris**.", "tool_calls": [], "tool_call_id": null}], "source": "live_capture_sandbox", "tags": []}

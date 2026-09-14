@@ -1,0 +1,76 @@
+# Orchestration & Frameworks
+langgraph>=0.2.0
+langchain-core>=0.3.0
+pydantic>=2.8.0
+pydantic-settings>=2.4.0
+
+# FastAPI & API Stack
+fastapi>=0.111.0
+uvicorn[standard]>=0.30.0
+httpx>=0.27.0
+aiohttp>=3.9.0
+langchain-openai>=0.2.0
+
+# Video & Visual OSINT
+#
+# IMPORTANT #1: pinned below 5.0.0 — OpenCV 5.x removed cv2.CascadeClassifier
+# from the Python bindings entirely (confirmed: it's gone from `dir(cv2)`
+# in 5.0.0.93), which breaks our default zero-download face detector
+# (src/osint/face_detection_backend.py:HaarCascadeDetector). Do not relax
+# this upper bound without rewriting that detector against OpenCV 5.x's
+# replacement API first.
+#
+# IMPORTANT #2: deepface (below) depends on plain `opencv-python`, which
+# conflicts with opencv-python-headless if both end up installed — they
+# share the same `cv2` import namespace and partially overwrite each
+# other, breaking native submodules with a confusing "module 'cv2' has no
+# attribute X" error. requirements.txt alone cannot prevent pip from
+# installing a transitive dependency (opencv-python), so setup.sh removes
+# it after install — see setup.sh and the README "Setup" section. Do not
+# `pip install -r requirements.txt` directly without also running that
+# script (or its uninstall step) afterward.
+opencv-python-headless>=4.10.0,<5.0.0
+ffmpeg-python>=0.2.0
+deepface>=0.0.92
+# Required by deepface's RetinaFace backend against TensorFlow 2.16+: newer
+# TF versions default to Keras 3, but deepface's dependencies (retina-face)
+# still expect the legacy tf.keras API. Without this, `import deepface`
+# fails immediately with "ValueError: ... this requires tf-keras package."
+# Confirmed via a real, non-mocked install — this is not a hypothetical.
+tf-keras>=2.16.0
+numpy>=1.26.0
+
+# Sandboxed Execution & Tooling
+e2b-code-interpreter>=1.0.0
+docker>=7.1.0
+playwright>=1.45.0
+
+# Real-Time Voice Pipeline
+livekit-agents>=0.8.0
+livekit-plugins-silero>=0.6.0
+livekit-plugins-deepgram>=0.6.0
+livekit-plugins-cartesia>=0.6.0
+livekit-plugins-openai>=0.6.0
+
+# Vector Storage & Fine-Tuning Tools
+qdrant-client>=1.10.0
+triton>=3.0.0
+
+# Fine-Tuning Pipeline (QLoRA) — heavy GPU/CUDA deps, install separately on
+# training infra. Not required for the core agent (sandbox/OSINT/voice/API)
+# to run — see src/finetune/README section for why these aren't installed
+# by default here.
+# torch>=2.4.0
+# peft>=0.13.0
+# trl>=0.11.0
+# bitsandbytes>=0.44.0
+# accelerate>=1.0.0
+tokenizers>=0.20.0
+datasets>=3.0.0
+
+# Sandbox Session Registry
+redis>=5.0.0
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.24.0
